@@ -29,7 +29,6 @@ class SearchPage extends StatelessWidget {
             shadowColor: MaterialStateProperty.all(
                 const Color.fromARGB(0, 255, 255, 255)),
           ),
-          for
         ],
       ),
     );

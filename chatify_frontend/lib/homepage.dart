@@ -1,12 +1,43 @@
+import 'dart:convert';
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'album.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({
     super.key,
   });
 
+  final host = 'http://10.0.2.2:3000'; // using android emulator!
+
   @override
   Widget build(BuildContext context) {
+    var testlink = '${host}/api/getalbums';
+    Future<List<Album>> fetchAlbums() async {
+      try {
+        final res = await http.get(Uri.parse(testlink));
+        final reqSuccess = res.statusCode == 200;
+
+        if (reqSuccess) {
+          var albumJson = jsonDecode(res.body)["rows"] as List<dynamic>;
+          return albumJson.map((response) {
+            return Album(
+                title: response["Title"],
+                artist: response["Artist"],
+                coverImgLink: response["CoverImgLink"],
+                releaseDate: response["ReleaseDate"],
+                genre: response["Genre"]);
+          }).toList();
+        } else {
+          throw Exception("reqSuccess is invalid.");
+        }
+      } catch (error) {
+        throw Exception(error);
+      }
+    }
+
     var placeholderUsername = "William";
     var placeholderInfo = {
       {
@@ -55,28 +86,36 @@ class HomePage extends StatelessWidget {
           ),
           Container(
             height: MediaQuery.of(context).size.width / 2.5 + 100,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                for (var item in placeholderInfo)
-                  Container(
-                    margin: const EdgeInsets.only(
-                        top: 20, bottom: 20, left: 10, right: 10),
-                    child: Column(children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        height: MediaQuery.of(context).size.width / 2.5,
-                        child: Image.network(item['image-url']!,
-                            fit: BoxFit.cover),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(item['name']!),
-                      Text("${item['type']!} by ${item['artist']!}"),
-                      const SizedBox(height: 10),
-                    ]),
-                  ),
-              ],
-            ),
+            child: FutureBuilder(
+                future: fetchAlbums(),
+                builder: (context, response) {
+                  if (response.hasData) {
+                    return ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        for (var album in response.data!)
+                          Container(
+                            margin: const EdgeInsets.only(
+                                top: 20, bottom: 20, left: 10, right: 10),
+                            child: Column(children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                height: MediaQuery.of(context).size.width / 2.5,
+                                child: Image.network(album.coverImgLink,
+                                    fit: BoxFit.cover),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(album.title),
+                              Text("Album by ${album.artist}"),
+                              const SizedBox(height: 10),
+                            ]),
+                          ),
+                      ],
+                    );
+                  } else {
+                    return Text("error");
+                  }
+                }),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
