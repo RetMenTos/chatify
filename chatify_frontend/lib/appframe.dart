@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'bottomnavbar.dart';
 import 'homepage.dart';
 import 'searchpage.dart';
+import 'albumpage.dart';
 
 class AppFrame extends StatefulWidget {
   const AppFrame({super.key});
@@ -12,13 +13,14 @@ class AppFrame extends StatefulWidget {
 
 class _AppFrameState extends State<AppFrame> {
   int currentPageIndex = 0;
+  int currentAlbumID = 1;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavBar(setPage: _setPage),
       body: <Widget>[
-        HomePage(),
+        HomePage(openAlbum: _openAlbum),
         SearchPage(),
         Expanded(
             child: Column(
@@ -31,6 +33,7 @@ class _AppFrameState extends State<AppFrame> {
             const Placeholder(),
           ],
         )),
+        AlbumPage(setPage: _setPage, currentAlbumID: currentAlbumID),
       ][currentPageIndex],
     );
   }
@@ -38,6 +41,13 @@ class _AppFrameState extends State<AppFrame> {
   void _setPage(int index) {
     setState(() {
       currentPageIndex = index;
+    });
+  }
+
+  void _openAlbum(int index) {
+    setState(() {
+      currentPageIndex = 3;
+      currentAlbumID = index;
     });
   }
 }

@@ -32,3 +32,12 @@ app.get('/api/getalbums', (req, res) => {
     })
     .catch((err) => console.log(err))
 });
+
+app.get('/api/getalbumtracks', (req, res) => {
+    albumID = req.query.album;
+    dbconn.promise().query(`SELECT * from tracks where AlbumID = ${albumID};`)
+    .then( ([rows]) => {
+        res.json({ rows })
+    })
+    .catch((err) => console.log(err))
+});

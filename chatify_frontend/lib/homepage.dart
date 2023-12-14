@@ -8,8 +8,10 @@ import 'album.dart';
 class HomePage extends StatelessWidget {
   const HomePage({
     super.key,
+    required this.openAlbum
   });
 
+  final Function openAlbum;
   final host = 'http://10.0.2.2:3000'; // using android emulator!
 
   @override
@@ -24,6 +26,7 @@ class HomePage extends StatelessWidget {
           var albumJson = jsonDecode(res.body)["rows"] as List<dynamic>;
           return albumJson.map((response) {
             return Album(
+                albumID: response["AlbumID"],
                 title: response["Title"],
                 artist: response["Artist"],
                 coverImgLink: response["CoverImgLink"],
@@ -94,21 +97,24 @@ class HomePage extends StatelessWidget {
                       scrollDirection: Axis.horizontal,
                       children: [
                         for (var album in response.data!)
-                          Container(
-                            margin: const EdgeInsets.only(
-                                top: 20, bottom: 20, left: 10, right: 10),
-                            child: Column(children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width / 2.5,
-                                height: MediaQuery.of(context).size.width / 2.5,
-                                child: Image.network(album.coverImgLink,
-                                    fit: BoxFit.cover),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(album.title),
-                              Text("Album by ${album.artist}"),
-                              const SizedBox(height: 10),
-                            ]),
+                          InkWell(
+                            onTap: () {openAlbum(album.albumID);},
+                            child: Container(
+                              margin: const EdgeInsets.only(
+                                  top: 20, bottom: 20, left: 10, right: 10),
+                              child: Column(children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 2.5,
+                                  height: MediaQuery.of(context).size.width / 2.5,
+                                  child: Image.network(album.coverImgLink,
+                                      fit: BoxFit.cover),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(album.title),
+                                Text("Album by ${album.artist}"),
+                                const SizedBox(height: 10),
+                              ]),
+                            ),
                           ),
                       ],
                     );
@@ -117,78 +123,78 @@ class HomePage extends StatelessWidget {
                   }
                 }),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 20),
-              Text(
-                "Your Favourites",
-                style: Theme.of(context).textTheme.titleMedium,
-                textAlign: TextAlign.start,
-              ),
-            ],
-          ),
-          Container(
-            height: MediaQuery.of(context).size.width / 2.5 + 100,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                for (var item in placeholderInfo)
-                  Container(
-                    margin: const EdgeInsets.only(
-                        top: 20, bottom: 20, left: 10, right: 10),
-                    child: Column(children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        height: MediaQuery.of(context).size.width / 2.5,
-                        child: Image.network(item['image-url']!,
-                            fit: BoxFit.cover),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(item['name']!),
-                      Text("${item['type']!} by ${item['artist']!}"),
-                      const SizedBox(height: 10),
-                    ]),
-                  ),
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 20),
-              Text(
-                "We Recommend",
-                style: Theme.of(context).textTheme.titleMedium,
-                textAlign: TextAlign.start,
-              ),
-            ],
-          ),
-          Container(
-            height: MediaQuery.of(context).size.width / 2.5 + 100,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                for (var item in placeholderInfo)
-                  Container(
-                    margin: const EdgeInsets.only(
-                        top: 20, bottom: 20, left: 10, right: 10),
-                    child: Column(children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        height: MediaQuery.of(context).size.width / 2.5,
-                        child: Image.network(item['image-url']!,
-                            fit: BoxFit.cover),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(item['name']!),
-                      Text("${item['type']!} by ${item['artist']!}"),
-                      const SizedBox(height: 10),
-                    ]),
-                  ),
-              ],
-            ),
-          ),
+          // Column(
+          //   crossAxisAlignment: CrossAxisAlignment.stretch,
+          //   children: [
+          //     const SizedBox(height: 20),
+          //     Text(
+          //       "Your Favourites",
+          //       style: Theme.of(context).textTheme.titleMedium,
+          //       textAlign: TextAlign.start,
+          //     ),
+          //   ],
+          // ),
+          // Container(
+          //   height: MediaQuery.of(context).size.width / 2.5 + 100,
+          //   child: ListView(
+          //     scrollDirection: Axis.horizontal,
+          //     children: [
+          //       for (var item in placeholderInfo)
+          //         Container(
+          //           margin: const EdgeInsets.only(
+          //               top: 20, bottom: 20, left: 10, right: 10),
+          //           child: Column(children: [
+          //             Container(
+          //               width: MediaQuery.of(context).size.width / 2.5,
+          //               height: MediaQuery.of(context).size.width / 2.5,
+          //               child: Image.network(item['image-url']!,
+          //                   fit: BoxFit.cover),
+          //             ),
+          //             const SizedBox(height: 10),
+          //             Text(item['name']!),
+          //             Text("${item['type']!} by ${item['artist']!}"),
+          //             const SizedBox(height: 10),
+          //           ]),
+          //         ),
+          //     ],
+          //   ),
+          // ),
+          // Column(
+          //   crossAxisAlignment: CrossAxisAlignment.stretch,
+          //   children: [
+          //     const SizedBox(height: 20),
+          //     Text(
+          //       "We Recommend",
+          //       style: Theme.of(context).textTheme.titleMedium,
+          //       textAlign: TextAlign.start,
+          //     ),
+          //   ],
+          // ),
+          // Container(
+          //   height: MediaQuery.of(context).size.width / 2.5 + 100,
+          //   child: ListView(
+          //     scrollDirection: Axis.horizontal,
+          //     children: [
+          //       for (var item in placeholderInfo)
+          //         Container(
+          //           margin: const EdgeInsets.only(
+          //               top: 20, bottom: 20, left: 10, right: 10),
+          //           child: Column(children: [
+          //             Container(
+          //               width: MediaQuery.of(context).size.width / 2.5,
+          //               height: MediaQuery.of(context).size.width / 2.5,
+          //               child: Image.network(item['image-url']!,
+          //                   fit: BoxFit.cover),
+          //             ),
+          //             const SizedBox(height: 10),
+          //             Text(item['name']!),
+          //             Text("${item['type']!} by ${item['artist']!}"),
+          //             const SizedBox(height: 10),
+          //           ]),
+          //         ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );
